@@ -24,6 +24,7 @@ def analyser_ventes(transactions):
             "ecart_type": 0,
             "max": None,
             "min": None,
+            "etendue": 0,
             "anomalies": []
         }
 
@@ -34,6 +35,10 @@ def analyser_ventes(transactions):
     ecart_type = statistics.stdev(ventes_valides) if nombre > 1 else 0
     valeur_max = max(ventes_valides)
     valeur_min = min(ventes_valides)
+
+    # Calcul de l'étendue
+    etendue = calculer_etendue(ventes_valides)
+
 
     # Détection des anomalies : transactions supérieures à 2x la moyenne
     seuil_anomalie = 2 * moyenne
@@ -47,8 +52,23 @@ def analyser_ventes(transactions):
         "ecart_type": round(ecart_type, 2),
         "max": valeur_max,
         "min": valeur_min,
+        "etendue": etendue,
         "anomalies": anomalies
     }
+
+
+def calculer_etendue(ventes):
+    """
+    Calcule l'étendue d'une liste de ventes.
+
+    L'étendue correspond à la différence entre
+    la valeur maximale et la valeur minimale.
+    """
+    if not ventes:
+        return 0
+
+    return max(ventes) - min(ventes)
+
 
 
 if __name__ == "__main__":
@@ -65,4 +85,5 @@ if __name__ == "__main__":
     print(f"Écart-type                     : {resultats['ecart_type']} €")
     print(f"Valeur maximale                : {resultats['max']} €")
     print(f"Valeur minimale                : {resultats['min']} €")
+    print(f"Étendue                        : {resultats['etendue']} €")
     print(f"Transactions anormales (> 2x moyenne) : {resultats['anomalies']}")
